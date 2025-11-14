@@ -1,44 +1,152 @@
-[tool.poetry]
-name = "mathy"
-version = "0.1.0"
-description = "A novel model architecture to solve arithmetic problems"
-authors = ["Your Name <your.email@example.com>"]
-license = "MIT"
-readme = "README.md"
-homepage = "https://github.com/rl337/mathy"
-repository = "https://github.com/rl337/maty"
-keywords = ["arithmetic", "machine learning", "neural networks"]
-
-[tool.poetry.dependencies]
-python = "^3.10"
-torch = "==2.2.2"  # PyTorch
-numpy = "<2.0.0"
-num2words = "^0.5.13"
-babel = "^2.16.0"
-torchvision = "^0.17.0"
-
-[tool.poetry.dev-dependencies]
-pytest = ">=7.5"  # For testing
-black = ">=23.7"  # Code formatting
-flake8 = ">=6.1"  # Linting
-mypy = "^1.7"  # Type checking
-
 [build-system]
-requires = ["poetry-core>=1.6.1"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
-[tool.pytest.ini_options]
-minversion = "7.0"
-addopts = "--strict-markers"
-testpaths = ["tests"]
+[project]
+name = "doc-o-matic"
+version = "0.1.0"
+description = "A structured, agent-friendly documentation system for specifications, feature docs, and implementation notes"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+keywords = ["documentation", "mcp", "markdown", "agent-friendly", "structured-docs"]
+dependencies = [
+    # MCP Server Framework - Core library for building MCP servers
+    "mcp>=1.21.0",
+    # HTTP API framework for SSE endpoints
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    # Configuration management with type validation and .env file support
+    "pydantic-settings>=2.0.0",
+    # Markdown processing for document handling
+    "markdown>=3.5.1",
+    # Enhanced markdown features for better parsing and rendering
+    "markdown-it-py>=3.0.0",
+    # Database ORM for document storage and metadata management
+    "sqlalchemy>=2.0.23",
+    # Database migration tool
+    "alembic>=1.13.0",
+    # PostgreSQL driver
+    "psycopg2-binary>=2.9.9",
+    # GitHub API integration for export functionality
+    "PyGithub>=2.1.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing Framework
+    "pytest>=8.0.0",
+    "pytest-cov>=7.0.0",
+    "pytest-timeout>=2.2.0",
+    "pytest-xdist>=3.5.0",
+    # Code Quality
+    "black>=25.11.0",
+    "ruff>=0.14.4",
+    "mypy>=1.18.2",
+    # Security Tools
+    "safety>=3.0.0",
+    "bandit>=1.7.0",
+    # Coverage tool
+    "coverage>=7.4.0",
+]
+
+[tool.setuptools]
+packages = ["docomatic"]
 
 [tool.black]
-line-length = 88
-target-version = ['py310']
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
 
-[tool.flake8]
-max-line-length = 88
-exclude = ["venv", ".venv", "__pycache__"]
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
 
 [tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
 ignore_missing_imports = true
+no_strict_optional = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--cov=docomatic",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--cov-fail-under=80",
+    "-v",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "performance: Performance tests",
+    "slow: Slow running tests",
+]
+timeout = 300
+timeout_method = "thread"
+
+[tool.coverage.run]
+source = ["docomatic"]
+omit = [
+    "*/tests/*",
+    "*/migrations/*",
+    "*/__pycache__/*",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+precision = 2
+show_missing = true
+skip_covered = false
