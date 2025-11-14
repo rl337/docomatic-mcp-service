@@ -1,0 +1,78 @@
+services:
+  postgresql:
+    image: postgres:15-alpine
+    container_name: doc-o-matic-postgresql
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-docomatic}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '${POSTGRES_CPU_LIMIT:-1.0}'
+          memory: ${POSTGRES_MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '${POSTGRES_CPU_RESERVATION:-0.25}'
+          memory: ${POSTGRES_MEMORY_RESERVATION:-128M}
+    networks:
+      - doc-o-matic-network
+
+  doc-o-matic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: doc-o-matic
+    restart: unless-stopped
+    ports:
+      - "${DOCORAMA_SERVICE_PORT:-8005}:8005"
+    environment:
+      # Database configuration - PostgreSQL connection string
+      - DATABASE_URL=${DATABASE_URL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgresql:5432/${POSTGRES_DB:-docomatic}}
+      - DB_POOL_SIZE=${DB_POOL_SIZE:-5}
+      - DB_MAX_OVERFLOW=${DB_MAX_OVERFLOW:-10}
+      - SQL_ECHO=${SQL_ECHO:-false}
+      # Optional: GitHub token for export functionality
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      # Data volume for SQLite fallback (if needed) or other persistent data
+      - doc_o_matic_data:/app/data
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '${DOC_O_MATIC_CPU_LIMIT:-1.0}'
+          memory: ${DOC_O_MATIC_MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '${DOC_O_MATIC_CPU_RESERVATION:-0.25}'
+          memory: ${DOC_O_MATIC_MEMORY_RESERVATION:-128M}
+    networks:
+      - doc-o-matic-network
+
+volumes:
+  postgres_data:
+    driver: local
+  doc_o_matic_data:
+    driver: local
+
+networks:
+  doc-o-matic-network:
+    driver: bridge
