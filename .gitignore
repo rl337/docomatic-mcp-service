@@ -12,12 +12,8 @@ dist/
 build/
 *.egg
 
-# Data
-data/
-backups/
-*.db
-*.db-shm
-*.db-wal
+# Data files are stored in /var/data/june/docomatic-mcp-service/
+# No need to ignore them here
 
 # IDE
 .vscode/

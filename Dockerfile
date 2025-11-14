@@ -3,7 +3,6 @@ FROM python:3.11-alpine
 # Install system dependencies
 RUN apk add --no-cache \
     sqlite \
-    postgresql-client \
     gzip \
     curl \
     git \
@@ -37,9 +36,8 @@ RUN adduser -D -s /bin/sh docomatic && \
 USER docomatic
 
 # Environment variables
-# Note: DATABASE_URL defaults to PostgreSQL for containerized setup
-# For local development with SQLite, override: DATABASE_URL=sqlite:///./data/docomatic.db
-ENV DATABASE_URL=postgresql://postgres:postgres@postgresql:5432/docomatic
+# Note: DATABASE_URL defaults to SQLite for containerized setup
+ENV DATABASE_URL=sqlite:///./data/docomatic.db
 ENV DB_POOL_SIZE=5
 ENV DB_MAX_OVERFLOW=10
 ENV SQL_ECHO=false
