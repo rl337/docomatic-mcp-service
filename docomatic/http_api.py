@@ -96,7 +96,7 @@ async def handle_jsonrpc_request(request: Dict[str, Any]) -> Dict[str, Any]:
                 }
             }
     elif method == "prompts/list":
-        # Return empty list - docorama doesn't expose prompts
+        # Return empty list - docomatic-mcp-service doesn't expose prompts
         return {
             "jsonrpc": jsonrpc,
             "id": request_id,
@@ -105,7 +105,7 @@ async def handle_jsonrpc_request(request: Dict[str, Any]) -> Dict[str, Any]:
             }
         }
     elif method == "resources/list":
-        # Return empty list - docorama doesn't expose resources
+        # Return empty list - docomatic-mcp-service doesn't expose resources
         return {
             "jsonrpc": jsonrpc,
             "id": request_id,

@@ -33,7 +33,7 @@ services:
     container_name: doc-o-matic
     restart: unless-stopped
     ports:
-      - "${DOCORAMA_SERVICE_PORT:-8005}:8005"
+      - "${DOCOMATIC_SERVICE_PORT:-8005}:8005"
     environment:
       # Database configuration - PostgreSQL connection string
       - DATABASE_URL=${DATABASE_URL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgresql:5432/${POSTGRES_DB:-docomatic}}

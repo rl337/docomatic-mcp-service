@@ -100,7 +100,7 @@ This document provides essential information for AI agents working on the Doc-O-
 ### Directory Organization
 
 ```
-docorama/
+docomatic-mcp-service/
 ├── docomatic/              # Main package
 │   ├── __init__.py
 │   ├── config.py           # Configuration management

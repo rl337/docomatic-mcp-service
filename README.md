@@ -56,8 +56,8 @@ Each document has:
 
 ```bash
 # Clone the repository
-git clone https://github.com/rl337/docorama.git
-cd docorama
+git clone https://github.com/rl337/docomatic-mcp-service.git
+cd docomatic-mcp-service
 
 # Install dependencies
 uv sync
@@ -73,8 +73,8 @@ uv run python -m docomatic.mcp_server
 
 ```bash
 # Clone the repository
-git clone https://github.com/rl337/docorama.git
-cd docorama
+git clone https://github.com/rl337/docomatic-mcp-service.git
+cd docomatic-mcp-service
 
 # Install in development mode
 pip install -e .
@@ -201,7 +201,7 @@ Doc-O-Matic exposes an **HTTP SSE endpoint** at `/mcp/sse` for MCP client integr
   http://localhost:8005/mcp/sse
   ```
 
-**Note**: The service runs as an HTTP SSE server on port 8005 (configurable via `DOCORAMA_SERVICE_PORT`).
+**Note**: The service runs as an HTTP SSE server on port 8005 (configurable via `DOCOMATIC_SERVICE_PORT`).
 
 #### 6. Stopping and Cleanup
 
@@ -667,7 +667,7 @@ The service follows the [MCP Services Containerization Standards](../agenticness
 ## Project Structure
 
 ```
-docorama/
+docomatic-mcp-service/
 ├── README.md                    # Project overview and setup (this file)
 ├── AGENTS.md                    # Agent development guidelines
 ├── pyproject.toml              # Project configuration and dependencies
@@ -1128,7 +1128,7 @@ with db.session() as session:
     result = export_service.export_document(
         document_id="doc-001",
         repo_owner="rl337",
-        repo_name="docorama",
+        repo_name="docomatic-mcp-service",
         config=ExportConfig(
             format=ExportFormat.SINGLE_FILE,
             base_path="docs",
@@ -1218,5 +1218,5 @@ MIT
 
 ## Repository
 
-- **GitHub**: https://github.com/rl337/docorama
-- **Issues**: https://github.com/rl337/docorama/issues
+- **GitHub**: https://github.com/rl337/docomatic-mcp-service
+- **Issues**: https://github.com/rl337/docomatic-mcp-service/issues
