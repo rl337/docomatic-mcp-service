@@ -273,3 +273,4 @@ docker compose exec doc-o-matic uv run alembic upgrade head
 - **MCP API**: See README.md for MCP tool documentation
 - **Database Schema**: See README.md for database schema details
 
+
