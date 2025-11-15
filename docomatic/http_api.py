@@ -131,15 +131,23 @@ async def handle_sse_request(request: Dict[str, Any]) -> str:
         result = await handle_jsonrpc_request(request)
         return f"data: {json.dumps(result)}\n\n"
     
-    # For simple method requests (like list_functions)
-    method = request.get("method", "list_functions")
-    if method == "list_functions":
+    # For GET requests, return tools/list by default (for Cursor SSE discovery)
+    method = request.get("method", "tools/list")
+    if method == "tools/list" or method == "list_functions":
+        # Return proper tools/list response for MCP SSE
         tool_schemas = get_tool_schemas()
+        tools = []
+        for tool_name, tool_def in tool_schemas.items():
+            tools.append({
+                "name": tool_def["name"],
+                "description": tool_def["description"],
+                "inputSchema": tool_def["inputSchema"]
+            })
         response = {
             "jsonrpc": "2.0",
             "id": None,
             "result": {
-                "functions": list(tool_schemas.keys())
+                "tools": tools
             }
         }
         return f"data: {json.dumps(response)}\n\n"
@@ -160,8 +168,11 @@ async def mcp_sse_post(request: dict = Body(...)):
 
 @app.get("/mcp/sse")
 async def mcp_sse_get():
-    """Server-Sent Events endpoint for MCP (GET)."""
-    result = await handle_sse_request({"method": "list_functions"})
+    """Server-Sent Events endpoint for MCP (GET).
+    
+    Returns tools/list response for Cursor SSE tool discovery.
+    """
+    result = await handle_sse_request({"method": "tools/list"})
     return StreamingResponse(content=result, media_type="text/event-stream")
 
 
