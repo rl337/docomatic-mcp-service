@@ -147,7 +147,40 @@ GITHUB_TOKEN=ghp_your_token_here
 
 **Important**: Change `POSTGRES_PASSWORD` from the default value in production environments.
 
-#### 2. Building the Docker Image
+#### 2. External Network Integration
+
+Doc-O-Matic creates a Docker network (`docomatic-mcp-service_doc-o-matic-network`) that can be used by other services for cross-container communication. This enables services in different Docker Compose projects to communicate.
+
+**Network Name**: `docomatic-mcp-service_doc-o-matic-network`  
+**Pattern**: `{project-name}_{network-name}`
+
+**Other services can connect to this network** by declaring it as an external network in their `docker-compose.yml`:
+
+```yaml
+networks:
+  doc-o-matic-network:
+    external: true
+    name: docomatic-mcp-service_doc-o-matic-network
+```
+
+Then reference it in their services:
+
+```yaml
+services:
+  my-service:
+    networks:
+      - doc-o-matic-network
+```
+
+**Benefits:**
+- ✅ Services can communicate using container names (e.g., `http://doc-o-matic:8005`)
+- ✅ Network persists even if Doc-O-Matic stops (if other services reference it)
+- ✅ Enables independent deployment and scaling of services
+- ✅ No need for a single monolithic docker-compose file
+
+**Note**: The network is created automatically when Doc-O-Matic starts. Other services must start after Doc-O-Matic to ensure the network exists.
+
+#### 3. Building the Docker Image
 
 ```bash
 # Build the image
