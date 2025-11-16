@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: doc-o-matic
+    container_name: docomatic-mcp-service-doc-o-matic
     restart: unless-stopped
     ports:
       - "${DOCOMATIC_SERVICE_PORT:-8005}:8005"
@@ -22,9 +22,10 @@ services:
       - /var/data/june/docomatic-mcp-service:/data
       - /var/log/june/docomatic-mcp-service:/logs
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8005/health"]
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:8005/health"]
       interval: 30s
       timeout: 10s
+      start_period: 30s
       retries: 3
     # Resource limits for production
     deploy:
